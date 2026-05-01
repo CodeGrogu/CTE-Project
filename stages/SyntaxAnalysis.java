@@ -308,7 +308,7 @@ public class SyntaxAnalysis {
         // Check identifier
         if (!isIdentifier(tokens.get(0).value)) {
             result.append(">>> SYNTAX ERROR: Expected identifier, found '")
-                  .append(tokens.get(0).value).append("'\n");
+                .append(tokens.get(0).value).append("'\n");
             return result.toString();
         }
         result.append(" ").append(tokens.get(0).value);
@@ -316,7 +316,7 @@ public class SyntaxAnalysis {
         // Check equals sign
         if (!tokens.get(1).value.equals("=")) {
             result.append("\n>>> SYNTAX ERROR: Expected '=', found '")
-                  .append(tokens.get(1).value).append("'\n");
+             .append(tokens.get(1).value).append("'\n");
             return result.toString();
         }
         result.append(" =");
