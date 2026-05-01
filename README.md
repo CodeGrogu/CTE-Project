@@ -2,7 +2,7 @@
 
 This repository contains the documentation and starter Java scaffold for the CTE711S Compiler Techniques group assignment. The assignment is to develop a mini compiler system in Java for the provided V-language-style program, checking errors and translating valid lines through the compiler stages.
 
-The Java files provide a compile-ready staged structure. All five assigned tasks are implemented across the seven compiler stages.
+The Java files provide a compile-ready staged structure. Task 1, Task 2, Task 3, and Task 4 logic is implemented; the remaining team-owned stage still needs its assigned implementation work.
 
 ## Assignment Summary
 
@@ -31,7 +31,7 @@ The planned source layout uses `MiniCompiler.java` as the coordinator. It import
 | Stage 4: Intermediate Code Representation | `stages/IntermediateCodeRepresentation.java` | Jaden | Implemented |
 | Stage 5: Code Generation | `stages/CodeGeneration.java` | Aloys | Implemented |
 | Stage 6: Code Optimization | `stages/CodeOptimization.java` | Celine | Implemented |
-| Stage 7: Target Machine Code in Binary | `stages/TargetMachineCode.java` | Enoch | Implemented |
+| Stage 7: Target Machine Code in Binary | `stages/TargetMachineCode.java` | Enoch | To be implemented |
 
 ## Pascal's Completed Task
 
@@ -64,14 +64,6 @@ Task 4 covers Stage 6:
 - `CodeOptimization.java` performs conservative optimization on generated lower-level code.
 - It removes exact duplicate consecutive `LOAD` instructions, which is safe for accumulator-style code.
 - It preserves `STORE` and `LOAD` pairs that are needed to keep temporary values correct.
-
-## Enoch's Completed Task
-
-Task 5 covers Stage 7:
-
-- `TargetMachineCode.java` converts optimized lower-level instructions into binary target machine code.
-- Each output instruction uses a 4-bit opcode and an 8-bit operand code.
-- Supported opcodes are `LOAD`, `STORE`, `ADD`, `SUB`, `MUL`, and `DIV`.
 
 ## Compiler Stages
 
