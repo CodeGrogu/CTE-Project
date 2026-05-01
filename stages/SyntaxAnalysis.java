@@ -14,6 +14,10 @@ public class SyntaxAnalysis {
     public static String analyze(String lexicalOutput) {
         StringBuilder result = new StringBuilder();
         
+        // TODO(Pascal): This method currently receives the long formatted report from
+        // LexicalAnalysis.java. The pipeline will work better if Stage 1 returns either:
+        // 1. "ERROR: Lexical error - ..." when lexical analysis fails, or
+        // 2. the original clean source line / clean token format when it succeeds.
         result.append("\n====== STAGE 2: SYNTAX ANALYSIS ======\n");
         result.append("Input from Lexical Analysis:\n");
         result.append(lexicalOutput);
@@ -23,6 +27,8 @@ public class SyntaxAnalysis {
         List<Token> tokens = extractTokens(lexicalOutput);
         
         if (tokens.isEmpty()) {
+            // TODO(Pascal): Every error returned to MiniCompiler.java must start with
+            // "ERROR:" so processing stops before Stage 3.
             result.append(">>> SYNTAX ERROR: No tokens to analyze\n");
             return result.toString();
         }
@@ -45,6 +51,10 @@ public class SyntaxAnalysis {
             return result.toString();
         }
         
+        // TODO(Pascal): On success, return the clean original line, not this formatted
+        // report. Stage 3 and Stage 4 need
+        // input such as "LET G = a + c", "M = A/B+C", or "N = G/H-I+a*B/c".
+        // On failure, return "ERROR: Syntax error - ...".
         return result.toString();
     }
     
