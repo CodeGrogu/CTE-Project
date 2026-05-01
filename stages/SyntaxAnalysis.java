@@ -1,184 +1,259 @@
 package stages;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 // Stage 2: Syntax Analysis.
 //Pascal 224084038
 
 public class SyntaxAnalysis {
-
-
-
-    // Valid keywords in the language
     private static final Set<String> KEYWORDS = new HashSet<>(Arrays.asList(
         "BEGIN", "INTEGER", "LET", "INPUT", "WRITE", "END"
     ));
 
-    public static String analyze(String input) {
+    private static final Set<Character> SEMANTIC_SYMBOLS = new HashSet<>(Arrays.asList(
+        '%', '$', '&', '<', '>'
+    ));
 
-        // Stop if previous stage already failed
+    public static String analyze(String input) {
         if (input.startsWith("ERROR:")) {
             return input;
         }
 
-        input = input.trim();
-
-        // Syntax rules (moved from lexical stage)
-        if (input.matches(".*\\d.*")) {
-            return "ERROR: Syntax error - Digits are not allowed";
+        String cleanInput = input.trim();
+        if (cleanInput.isEmpty()) {
+            return "ERROR: Syntax error - empty statement";
         }
 
-        if (input.endsWith(";")) {
-            return "ERROR: Syntax error - Semicolon not allowed";
+        if (containsDigit(cleanInput)) {
+            return "ERROR: Syntax error - digits are not allowed";
         }
 
-        if (input.matches(".*[+\\-*/]{2,}.*")) {
-            return "ERROR: Syntax error - Combined operators not allowed";
+        if (cleanInput.endsWith(";")) {
+            return "ERROR: Syntax error - semicolon at the end of a line is not allowed";
         }
 
-        // Split input into tokens
-        List<String> tokens = Arrays.asList(input.split("\\s+"));
+        if (containsCombinedOperators(cleanInput)) {
+            return "ERROR: Syntax error - combined operators are not allowed";
+        }
 
+        // Semantic-only symbols are allowed to pass through this stage so Stage 3
+        // can report them as semantic errors instead of syntax errors.
+        if (containsSemanticSymbol(cleanInput)) {
+            return cleanInput;
+        }
+
+        List<String> tokens = tokenize(cleanInput);
         if (tokens.isEmpty()) {
-            return "ERROR: Syntax error - Empty statement";
+            return "ERROR: Syntax error - empty statement";
         }
 
         String firstToken = tokens.get(0);
-
-        // Decide statement type
         if (KEYWORDS.contains(firstToken)) {
-            return parseKeyword(tokens, input);
-        } 
-        else if (isIdentifier(firstToken)) {
-            return parseAssignment(tokens, input);
-        } 
-        else {
-            return "ERROR: Syntax error - Invalid start of statement";
+            return parseKeywordStatement(tokens, cleanInput);
         }
+
+        if (isIdentifier(firstToken)) {
+            return parseAssignment(tokens, cleanInput);
+        }
+
+        return "ERROR: Syntax error - invalid start of statement";
     }
 
-    // Handle keyword-based statements
-    private static String parseKeyword(List<String> tokens, String input) {
-
+    private static String parseKeywordStatement(List<String> tokens, String cleanInput) {
         String keyword = tokens.get(0);
 
         switch (keyword) {
-
             case "BEGIN":
             case "END":
-                // Must be alone
                 if (tokens.size() != 1) {
                     return "ERROR: Syntax error - " + keyword + " must stand alone";
                 }
-                return input;
+                return cleanInput;
 
             case "INTEGER":
             case "INPUT":
-                // Format: identifier , identifier ...
-                if (tokens.size() < 2) {
-                    return "ERROR: Syntax error - Missing identifiers";
-                }
-
-                for (int i = 1; i < tokens.size(); i++) {
-                    if (i % 2 == 1) {
-                        if (!isIdentifier(tokens.get(i))) {
-                            return "ERROR: Syntax error - Invalid identifier";
-                        }
-                    } else {
-                        if (!tokens.get(i).equals(",")) {
-                            return "ERROR: Syntax error - Expected ','";
-                        }
-                    }
-                }
-                return input;
+                return parseIdentifierList(tokens, cleanInput, keyword);
 
             case "LET":
-                // Format: LET id = expression
-                if (tokens.size() < 4) {
-                    return "ERROR: Syntax error - Incomplete LET statement";
-                }
-
-                if (!isIdentifier(tokens.get(1))) {
-                    return "ERROR: Syntax error - Invalid identifier";
-                }
-
-                if (!tokens.get(2).equals("=")) {
-                    return "ERROR: Syntax error - Missing '='";
-                }
-
-                if (!validExpression(tokens.subList(3, tokens.size()))) {
-                    return "ERROR: Syntax error - Invalid expression";
-                }
-
-                return input;
+                return parseLet(tokens, cleanInput);
 
             case "WRITE":
-                // Format: WRITE expression
-                if (tokens.size() < 2) {
-                    return "ERROR: Syntax error - Missing expression";
-                }
-
-                if (!validExpression(tokens.subList(1, tokens.size()))) {
-                    return "ERROR: Syntax error - Invalid expression";
-                }
-
-                return input;
+                return parseWrite(tokens, cleanInput);
 
             default:
-                return "ERROR: Syntax error - Unknown keyword";
+                return "ERROR: Syntax error - unknown keyword";
         }
     }
 
-    // Handle assignment: X = expression
-    private static String parseAssignment(List<String> tokens, String input) {
+    private static String parseIdentifierList(List<String> tokens, String cleanInput, String keyword) {
+        if (tokens.size() < 2) {
+            return "ERROR: Syntax error - " + keyword + " requires at least one identifier";
+        }
 
+        boolean expectIdentifier = true;
+        for (int index = 1; index < tokens.size(); index++) {
+            String token = tokens.get(index);
+
+            if (expectIdentifier) {
+                if (!isIdentifier(token)) {
+                    return "ERROR: Syntax error - expected identifier";
+                }
+            } else if (!token.equals(",")) {
+                return "ERROR: Syntax error - expected ','";
+            }
+
+            expectIdentifier = !expectIdentifier;
+        }
+
+        if (expectIdentifier) {
+            return "ERROR: Syntax error - trailing comma is not allowed";
+        }
+
+        return cleanInput;
+    }
+
+    private static String parseLet(List<String> tokens, String cleanInput) {
+        if (tokens.size() < 4) {
+            return "ERROR: Syntax error - incomplete LET statement";
+        }
+
+        if (!isIdentifier(tokens.get(1))) {
+            return "ERROR: Syntax error - expected identifier after LET";
+        }
+
+        if (!tokens.get(2).equals("=")) {
+            return "ERROR: Syntax error - expected '=' after LET identifier";
+        }
+
+        if (!isValidExpression(tokens.subList(3, tokens.size()))) {
+            return "ERROR: Syntax error - invalid expression";
+        }
+
+        return cleanInput;
+    }
+
+    private static String parseWrite(List<String> tokens, String cleanInput) {
+        if (tokens.size() < 2) {
+            return "ERROR: Syntax error - WRITE requires an expression";
+        }
+
+        if (!isValidExpression(tokens.subList(1, tokens.size()))) {
+            return "ERROR: Syntax error - invalid WRITE expression";
+        }
+
+        return cleanInput;
+    }
+
+    private static String parseAssignment(List<String> tokens, String cleanInput) {
         if (tokens.size() < 3) {
-            return "ERROR: Syntax error - Incomplete assignment";
+            return "ERROR: Syntax error - incomplete assignment";
         }
 
         if (!isIdentifier(tokens.get(0))) {
-            return "ERROR: Syntax error - Invalid identifier";
+            return "ERROR: Syntax error - invalid assignment target";
         }
 
         if (!tokens.get(1).equals("=")) {
-            return "ERROR: Syntax error - Missing '='";
+            return "ERROR: Syntax error - expected '=' in assignment";
         }
 
-        if (!validExpression(tokens.subList(2, tokens.size()))) {
-            return "ERROR: Syntax error - Invalid expression";
+        if (!isValidExpression(tokens.subList(2, tokens.size()))) {
+            return "ERROR: Syntax error - invalid assignment expression";
         }
 
-        return input;
+        return cleanInput;
     }
 
-    // Check if expression structure is valid
-    private static boolean validExpression(List<String> tokens) {
-
+    private static boolean isValidExpression(List<String> tokens) {
         boolean expectOperand = true;
 
-        for (String t : tokens) {
-
+        for (String token : tokens) {
             if (expectOperand) {
-                if (!isIdentifier(t) && !t.equals("(")) {
+                if (!isIdentifier(token) && !token.equals("(")) {
                     return false;
                 }
                 expectOperand = false;
-            } else {
-                if (t.equals("+") || t.equals("-") || t.equals("*") || t.equals("/")) {
-                    expectOperand = true;
-                } else if (t.equals(")")) {
-                    // allow closing bracket
-                } else {
-                    return false;
-                }
+                continue;
+            }
+
+            if (isOperator(token)) {
+                expectOperand = true;
+            } else if (!token.equals(")")) {
+                return false;
             }
         }
 
         return !expectOperand;
     }
 
-    // Identifier rules
+    private static List<String> tokenize(String input) {
+        List<String> tokens = new ArrayList<>();
+        int index = 0;
+
+        while (index < input.length()) {
+            char current = input.charAt(index);
+
+            if (Character.isWhitespace(current)) {
+                index++;
+                continue;
+            }
+
+            if (Character.isLetter(current)) {
+                int start = index;
+                while (index < input.length() && Character.isLetter(input.charAt(index))) {
+                    index++;
+                }
+                tokens.add(input.substring(start, index));
+                continue;
+            }
+
+            tokens.add(String.valueOf(current));
+            index++;
+        }
+
+        return tokens;
+    }
+
+    private static boolean containsDigit(String input) {
+        for (int index = 0; index < input.length(); index++) {
+            if (Character.isDigit(input.charAt(index))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsCombinedOperators(String input) {
+        for (int index = 0; index < input.length() - 1; index++) {
+            if (isOperator(input.charAt(index)) && isOperator(input.charAt(index + 1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsSemanticSymbol(String input) {
+        for (int index = 0; index < input.length(); index++) {
+            if (SEMANTIC_SYMBOLS.contains(input.charAt(index))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static boolean isIdentifier(String token) {
         return token.matches("[A-Za-z]") || token.matches("[a-z]{2,}");
+    }
+
+    private static boolean isOperator(String token) {
+        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
+    }
+
+    private static boolean isOperator(char token) {
+        return token == '+' || token == '-' || token == '*' || token == '/';
     }
 }
