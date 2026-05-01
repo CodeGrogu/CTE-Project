@@ -43,6 +43,12 @@ public class LexicalAnalysis {
                 continue;
             }
             
+            // TODO(Pascal): Do not handle these as lexical errors here.
+            // These symbols are assigned to Stage 3 Semantic Analysis, so this check
+            // blocks the Stage 3 semantic check from reporting the issue in the
+            // correct stage. Remove this check from lexical analysis.
+            // If this stage does return an error, it must start with "ERROR:" so
+            // MiniCompiler.java can stop the pipeline correctly.
             // Check for forbidden characters FIRST (Assignment requirement)
             if (FORBIDDEN.contains(c)) {
                 output.append(">>> LEXICAL ERROR: Forbidden character '").append(c)
@@ -51,6 +57,9 @@ public class LexicalAnalysis {
                 return output.toString();
             }
             
+            // TODO(Pascal): Digits are syntax errors in the assignment brief.
+            // This check should belong in SyntaxAnalysis.java, not LexicalAnalysis.java.
+            // Also return "ERROR: Syntax error - ..." instead of ">>> LEXICAL ERROR".
             // Check for digits (not allowed - syntax error per assignment)
             if (Character.isDigit(c)) {
                 output.append(">>> LEXICAL ERROR: Digit '").append(c)
@@ -73,6 +82,8 @@ public class LexicalAnalysis {
                 
                 // Check for misspelled keyword (uppercase but not in KEYWORDS)
                 if (tokenStr.matches("[A-Z]{2,}") && !KEYWORDS.contains(tokenStr)) {
+                    // TODO(Pascal): This is the right kind of lexical error, but the
+                    // returned message must start with "ERROR:" for MiniCompiler.java.
                     output.append(">>> LEXICAL ERROR: '").append(tokenStr)
                     .append("' is not a recognised keyword.\n");
                     output.append("    Did you mean a valid keyword?\n");
@@ -87,6 +98,9 @@ public class LexicalAnalysis {
             }
             // Handle operators
             else if (OPERATORS.contains(c)) {
+                // TODO(Pascal): Combined operators are syntax errors, so this check
+                // should be moved to SyntaxAnalysis.java. If kept here temporarily,
+                // return "ERROR: Syntax error - ..." so the pipeline stops.
                 // Check for combined operators (e.g., +*, -/, */)
                 if (i + 1 < sourceLine.length() && OPERATORS.contains(sourceLine.charAt(i + 1))) {
                     output.append(">>> SYNTAX ERROR: Combined operators '")
@@ -115,6 +129,8 @@ public class LexicalAnalysis {
             }
         }
         
+        // TODO(Pascal): Semicolon-at-end is a syntax error and should be checked in
+        // SyntaxAnalysis.java. Also, error messages must start with "ERROR:".
         // Check for semicolon at end of line (Syntax error per assignment)
         if (sourceLine.trim().endsWith(";")) {
             output.append(">>> SYNTAX ERROR: Semicolon ';' at end of line is not allowed.\n");
@@ -126,6 +142,10 @@ public class LexicalAnalysis {
         output.append("LEXICAL ANALYSIS COMPLETED SUCCESSFULLY\n");
         output.append("Total tokens: ").append(tokenCount).append("\n");
         
+        // TODO(Pascal): On success, return a clean value that the next stage can use.
+        // The current formatted report is useful for display, but SyntaxAnalysis.java
+        // and Jaden's later stages need the original validated source line or a clean
+        // token format, not a long text report.
         return output.toString();
     }
     
