@@ -6,10 +6,10 @@ import stages.SemanticAnalysis;
 import stages.SyntaxAnalysis;
 import stages.TargetMachineCode;
 
-// Main coordinator for the compiler assignment.
-// The actual stage logic belongs in the separate files inside the stages/ folder.
+// Main coordinator for the compiler assignment. This class controls the order
+// of the pipeline; each stage file in the stages/ folder owns its own logic.
 public class MiniCompiler {
-    // Stage files should return a message starting with this prefix when an error is found.
+    // Any stage can stop processing by returning text that starts with this prefix.
     private static final String ERROR_PREFIX = "ERROR:";
 
     public static void main(String[] args) {
@@ -51,20 +51,22 @@ public class MiniCompiler {
             return;
         }
 
-        // Stage 3: check meaning and disallowed semantic symbols.
+        // Stage 3: semantic analysis catches disallowed meaning-level symbols.
+        // It does not replace Pascal's lexical or syntax checks.
         String semanticOutput = SemanticAnalysis.analyze(syntaxOutput);
         if (isError(semanticOutput)) {
             printOutput(semanticOutput);
             return;
         }
 
-        // Only the three valid assignment lines continue through stages 4 to 7.
+        // Assignment rule: only the three valid expression lines continue beyond
+        // analysis into ICR, code generation, optimization, and machine code.
         if (!shouldRunFullCompilerPipeline(line)) {
             printOutput("Checked only: " + semanticOutput);
             return;
         }
 
-        // Stage 4: build the intermediate representation.
+        // Stage 4: ICR converts the expression into three-address code.
         String intermediateOutput = IntermediateCodeRepresentation.generate(semanticOutput);
 
         // Stage 5: generate lower-level code from the intermediate representation.
