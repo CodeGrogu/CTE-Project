@@ -16,7 +16,7 @@ Jaden
 
 ## Purpose
 
-Task 2 implements Jaden's compiler responsibilities after lexical and syntax checks have passed.
+Task 2 implements Stage 3 and Stage 4 responsibilities after lexical and syntax checks have passed.
 
 ## Stage 3: Semantic Analysis
 
