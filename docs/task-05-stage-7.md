@@ -4,6 +4,10 @@
 
 7. Target Machine Code (TMC) in Binary
 
+## Assigned Team Member
+
+Enoch
+
 ## Assigned Java File
 
 - `stages/TargetMachineCode.java`

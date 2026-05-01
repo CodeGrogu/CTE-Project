@@ -2,7 +2,7 @@
 
 This repository contains the documentation and starter Java scaffold for the CTE711S Compiler Techniques group assignment. The assignment is to develop a mini compiler system in Java for the provided V-language-style program, checking errors and translating valid lines through the compiler stages.
 
-The current Java files are compile-ready placeholders. They set up the file structure and method calls only; each team member still needs to implement the logic for their assigned compiler stage.
+The Java files provide a compile-ready staged structure. Jaden's Stage 3 and Stage 4 logic is implemented; the remaining team-owned stages still need their assigned implementation work.
 
 ## Assignment Summary
 
@@ -23,15 +23,23 @@ All other lines should only be checked for errors and should report the error fo
 
 The planned source layout uses `MiniCompiler.java` as the coordinator. It imports and calls separate stage classes from the `stages/` folder so each team member can work on their assigned stage file without editing the main coordinator unnecessarily.
 
-| Stage | Java File | Owner |
-| --- | --- | --- |
-| Stage 1: Lexical Analysis | `stages/LexicalAnalysis.java` | Pascal |
-| Stage 2: Syntax Analysis | `stages/SyntaxAnalysis.java` | Pascal |
-| Stage 3: Semantic Analysis | `stages/SemanticAnalysis.java` | Jaden |
-| Stage 4: Intermediate Code Representation | `stages/IntermediateCodeRepresentation.java` | Jaden |
-| Stage 5: Code Generation | `stages/CodeGeneration.java` | Aloys |
-| Stage 6: Code Optimization | `stages/CodeOptimization.java` | To be completed |
-| Stage 7: Target Machine Code in Binary | `stages/TargetMachineCode.java` | To be completed |
+| Stage | Java File | Owner | Status |
+| --- | --- | --- | --- |
+| Stage 1: Lexical Analysis | `stages/LexicalAnalysis.java` | Pascal | To be implemented |
+| Stage 2: Syntax Analysis | `stages/SyntaxAnalysis.java` | Pascal | To be implemented |
+| Stage 3: Semantic Analysis | `stages/SemanticAnalysis.java` | Jaden | Implemented |
+| Stage 4: Intermediate Code Representation | `stages/IntermediateCodeRepresentation.java` | Jaden | Implemented |
+| Stage 5: Code Generation | `stages/CodeGeneration.java` | Aloys | To be implemented |
+| Stage 6: Code Optimization | `stages/CodeOptimization.java` | Celine | To be implemented |
+| Stage 7: Target Machine Code in Binary | `stages/TargetMachineCode.java` | Enoch | To be implemented |
+
+## Jaden's Completed Task
+
+Task 2 covers Stage 3 and Stage 4:
+
+- `SemanticAnalysis.java` checks for disallowed semantic symbols: `%`, `$`, `&`, `<`, and `>`.
+- `IntermediateCodeRepresentation.java` converts valid assignment expressions into three-address code.
+- Lexical and syntax errors remain Pascal's responsibility in Stage 1 and Stage 2.
 
 ## Compiler Stages
 
@@ -50,8 +58,8 @@ The planned source layout uses `MiniCompiler.java` as the coordinator. It import
 | Task 1 | Stage 1 and Stage 2 | Pascal | [docs/task-01-stages-1-2.md](docs/task-01-stages-1-2.md) |
 | Task 2 | Stage 3 and Stage 4 | Jaden | [docs/task-02-stages-3-4.md](docs/task-02-stages-3-4.md) |
 | Task 3 | Stage 5 | Aloys | [docs/task-03-stage-5.md](docs/task-03-stage-5.md) |
-| Task 4 | Stage 6 | To be completed | [docs/task-04-stage-6.md](docs/task-04-stage-6.md) |
-| Task 5 | Stage 7 | To be completed | [docs/task-05-stage-7.md](docs/task-05-stage-7.md) |
+| Task 4 | Stage 6 | Celine | [docs/task-04-stage-6.md](docs/task-04-stage-6.md) |
+| Task 5 | Stage 7 | Enoch | [docs/task-05-stage-7.md](docs/task-05-stage-7.md) |
 
 ## Team Members
 
@@ -70,10 +78,10 @@ All team members are Computer Science software developers.
 | No. | Name | Role Played |
 | --- | --- | --- |
 | 1 | Jaden | Task 2: Stage 3 Semantic Analysis and Stage 4 Intermediate Code Representation |
-| 2 | Enoch | To be completed |
+| 2 | Enoch | Task 5: Stage 7 Target Machine Code in Binary |
 | 3 | Aloys | Task 3: Stage 5 Code Generation |
 | 4 | Pascal | Task 1: Stage 1 Lexical Analysis and Stage 2 Syntax Analysis |
-| 5 | Celine | To be completed |
+| 5 | Celine | Task 4: Stage 6 Code Optimization |
 
 ## Repository Structure
 

@@ -4,6 +4,10 @@
 
 6. Code Optimization (CO)
 
+## Assigned Team Member
+
+Celine
+
 ## Assigned Java File
 
 - `stages/CodeOptimization.java`

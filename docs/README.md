@@ -13,4 +13,4 @@ This directory contains the documentation scaffold for the CTE711S mini compiler
 
 ## Implementation Scaffold
 
-The current Java source files are placeholders that compile and define the project structure. `MiniCompiler.java` coordinates the compiler pipeline, while each file in `stages/` is intended for the matching compiler stage owner.
+The Java source files compile and define the project structure. `MiniCompiler.java` coordinates the compiler pipeline, Jaden's Stage 3 and Stage 4 files are implemented, and the remaining stage files are ready for their assigned owners.
