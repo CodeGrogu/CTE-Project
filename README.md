@@ -25,8 +25,8 @@ The planned source layout uses `MiniCompiler.java` as the coordinator. It import
 
 | Stage | Java File | Owner | Status |
 | --- | --- | --- | --- |
-| Stage 1: Lexical Analysis | `stages/LexicalAnalysis.java` | Pascal | To be implemented |
-| Stage 2: Syntax Analysis | `stages/SyntaxAnalysis.java` | Pascal | To be implemented |
+| Stage 1: Lexical Analysis | `stages/LexicalAnalysis.java` | Pascal | Implemented |
+| Stage 2: Syntax Analysis | `stages/SyntaxAnalysis.java` | Pascal | Implemented |
 | Stage 3: Semantic Analysis | `stages/SemanticAnalysis.java` | Jaden | Implemented |
 | Stage 4: Intermediate Code Representation | `stages/IntermediateCodeRepresentation.java` | Jaden | Implemented |
 | Stage 5: Code Generation | `stages/CodeGeneration.java` | Aloys | To be implemented |
