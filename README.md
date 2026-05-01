@@ -41,6 +41,14 @@ Task 2 covers Stage 3 and Stage 4:
 - `IntermediateCodeRepresentation.java` converts valid assignment expressions into three-address code.
 - Lexical and syntax errors remain Pascal's responsibility in Stage 1 and Stage 2.
 
+## Pascal's Completed Task
+
+Task 1 covers Stage 1 and Stage 2:
+
+- `LexicalAnalysis.java` validates characters and keyword spelling.
+- `SyntaxAnalysis.java` checks statement structure, combined operators, digits, and semicolon-at-end errors.
+- Both stages return `ERROR: ...` when processing must stop, or the clean source line when processing can continue.
+
 ## Compiler Stages
 
 1. Lexical Analysis (Scanner)
