@@ -1,202 +1,107 @@
-//Pascal
-
 package stages;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+    // Stage 1: Lexical Analysis.
+    //Pascal 224084038
+
 public class LexicalAnalysis {
-    
+
     // Valid keywords
     private static final Set<String> KEYWORDS = new HashSet<>(Arrays.asList(
         "BEGIN", "INTEGER", "LET", "INPUT", "WRITE", "END"
     ));
-    
-    // Valid operators
-    private static final Set<Character> OPERATORS = new HashSet<>(Arrays.asList('+', '-', '*', '/'));
-    
-    // Valid symbols
-    private static final Set<Character> SYMBOLS = new HashSet<>(Arrays.asList('=', ','));
-    
-    // Forbidden characters
-    private static final Set<Character> FORBIDDEN = new HashSet<>(Arrays.asList('%', '$', '&', '<', '>', ';'));
-    
+
+    // Allowed operators
+    private static final Set<Character> OPERATORS = new HashSet<>(Arrays.asList(
+        '+', '-', '*', '/'
+    ));
+
+    // Allowed symbols
+    private static final Set<Character> SYMBOLS = new HashSet<>(Arrays.asList(
+        '=', ',', '(', ')'
+    ));
+
     public static String analyze(String sourceLine) {
-        StringBuilder output = new StringBuilder();
-        List<String> tokens = new ArrayList<>();
-        int tokenCount = 0;
-        
-        output.append("\n====== STAGE 1: LEXICAL ANALYSIS ======\n");
-        output.append("Source line: \"").append(sourceLine).append("\"\n");
-        output.append("----------------------------------------\n");
-        
+
         int i = 0;
+
         while (i < sourceLine.length()) {
             char c = sourceLine.charAt(i);
-            
-            // Skip whitespace
+
+            // Skip spaces
             if (Character.isWhitespace(c)) {
                 i++;
                 continue;
             }
-            
-            // TODO(Pascal): Do not handle these as lexical errors here.
-            // These symbols are assigned to Stage 3 Semantic Analysis, so this check
-            // blocks the Stage 3 semantic check from reporting the issue in the
-            // correct stage. Remove this check from lexical analysis.
-            // If this stage does return an error, it must start with "ERROR:" so
-            // MiniCompiler.java can stop the pipeline correctly.
-            // Check for forbidden characters FIRST (Assignment requirement)
-            if (FORBIDDEN.contains(c)) {
-                output.append(">>> LEXICAL ERROR: Forbidden character '").append(c)
-                .append("' found at position ").append(i + 1).append("\n");
-                output.append("    Symbols %, $, &, <, >, ; are not allowed.\n");
-                return output.toString();
+
+            // ❌ Invalid character (true lexical error only)
+            if (!Character.isLetterOrDigit(c) &&
+                !OPERATORS.contains(c) &&
+                !SYMBOLS.contains(c)) {
+
+                return "ERROR: Lexical error - Invalid character '" + c + "'";
             }
-            
-            // TODO(Pascal): Digits are syntax errors in the assignment brief.
-            // This check should belong in SyntaxAnalysis.java, not LexicalAnalysis.java.
-            // Also return "ERROR: Syntax error - ..." instead of ">>> LEXICAL ERROR".
-            // Check for digits (not allowed - syntax error per assignment)
-            if (Character.isDigit(c)) {
-                output.append(">>> LEXICAL ERROR: Digit '").append(c)
-                    .append("' found at position ").append(i + 1).append("\n");
-                output.append("    Digits 0-9 are not allowed in this language.\n");
-                return output.toString();
-            }
-            
-            tokenCount++;
-            
-            // Handle keywords and identifiers
+
+            // Handle words (keywords / identifiers)
             if (Character.isLetter(c)) {
+
                 StringBuilder token = new StringBuilder();
-                while (i < sourceLine.length() && (Character.isLetterOrDigit(sourceLine.charAt(i)) || 
-                        sourceLine.charAt(i) == '_')) {
+
+                while (i < sourceLine.length() &&
+                      (Character.isLetterOrDigit(sourceLine.charAt(i)) ||
+                       sourceLine.charAt(i) == '_')) {
+
                     token.append(sourceLine.charAt(i));
                     i++;
                 }
-                String tokenStr = token.toString();
-                
-                // Check for misspelled keyword (uppercase but not in KEYWORDS)
-                if (tokenStr.matches("[A-Z]{2,}") && !KEYWORDS.contains(tokenStr)) {
-                    // TODO(Pascal): This is the right kind of lexical error, but the
-                    // returned message must start with "ERROR:" for MiniCompiler.java.
-                    output.append(">>> LEXICAL ERROR: '").append(tokenStr)
-                    .append("' is not a recognised keyword.\n");
-                    output.append("    Did you mean a valid keyword?\n");
-                    return output.toString();
+
+                String word = token.toString();
+
+                // ❌ Wrong keyword (e.g. BEGINN)
+                if (word.matches("[A-Z]{2,}") && !KEYWORDS.contains(word)) {
+                    return "ERROR: Lexical error - '" + word + "' is not a valid keyword";
                 }
-                
-                // Classify the token
-                String type = classifyToken(tokenStr);
-                output.append(String.format("TOKEN#%-3d %-15s %s\n", 
-                           tokenCount, tokenStr, type));
-                tokens.add(tokenStr);
+
+                continue;
             }
-            // Handle operators
-            else if (OPERATORS.contains(c)) {
-                // TODO(Pascal): Combined operators are syntax errors, so this check
-                // should be moved to SyntaxAnalysis.java. If kept here temporarily,
-                // return "ERROR: Syntax error - ..." so the pipeline stops.
-                // Check for combined operators (e.g., +*, -/, */)
-                if (i + 1 < sourceLine.length() && OPERATORS.contains(sourceLine.charAt(i + 1))) {
-                    output.append(">>> SYNTAX ERROR: Combined operators '")
-                          .append(c).append(sourceLine.charAt(i + 1))
-                          .append("' are not allowed.\n");
-                    return output.toString();
-                }
-                output.append(String.format("TOKEN#%-3d %-15s %s\n", 
-                           tokenCount, c, "OPERATOR"));
-                tokens.add(String.valueOf(c));
-                i++;
-            }
-            // Handle symbols
-            else if (SYMBOLS.contains(c)) {
-                String symbolType = (c == '=') ? "assignment" : "separator";
-                output.append(String.format("TOKEN#%-3d %-15s %s (%s)\n", 
-                           tokenCount, c, "SYMBOL", symbolType));
-                tokens.add(String.valueOf(c));
-                i++;
-            }
-            // Handle any other character
-            else {
-                output.append(">>> LEXICAL ERROR: Invalid character '").append(c)
-                      .append("' at position ").append(i + 1).append("\n");
-                return output.toString();
-            }
+
+            // Move forward for operators/symbols
+            i++;
         }
-        
-        // TODO(Pascal): Semicolon-at-end is a syntax error and should be checked in
-        // SyntaxAnalysis.java. Also, error messages must start with "ERROR:".
-        // Check for semicolon at end of line (Syntax error per assignment)
-        if (sourceLine.trim().endsWith(";")) {
-            output.append(">>> SYNTAX ERROR: Semicolon ';' at end of line is not allowed.\n");
-            return output.toString();
-        }
-        
-        // Summary
-        output.append("----------------------------------------\n");
-        output.append("LEXICAL ANALYSIS COMPLETED SUCCESSFULLY\n");
-        output.append("Total tokens: ").append(tokenCount).append("\n");
-        
-        // TODO(Pascal): On success, return a clean value that the next stage can use.
-        // The current formatted report is useful for display, but SyntaxAnalysis.java
-        // and Jaden's later stages need the original validated source line or a clean
-        // token format, not a long text report.
-        return output.toString();
+
+        // ✅ Success → return clean input for next stage
+        return sourceLine.trim();
     }
-    
-    /**
-     * Classifies a token based on assignment rules
-     */
-    private static String classifyToken(String token) {
-        // Keywords (uppercase)
-        if (KEYWORDS.contains(token)) {
-            return "KEYWORD";
-        }
-        // Identifiers: single letters A-Z, a-z OR multi-letter words in lowercase
-        if (token.matches("[A-Za-z]") || token.matches("[a-z]{2,}")) {
-            return "IDENTIFIER";
-        }
-        // Multi-letter uppercase that's not a keyword (already caught as error)
-        if (token.matches("[A-Z]{2,}")) {
-            return "INVALID_KEYWORD";
-        }
-        return "UNKNOWN";
+
+    // Optional: identifier rule (used in later stages)
+    private static boolean isIdentifier(String token) {
+        return token.matches("[A-Za-z]") || token.matches("[a-z]{2,}");
     }
-    
-    /**
-     * Simple test method
-     */
+
+    // Simple test
     public static void main(String[] args) {
-        // Test cases based on assignment requirements
+
         String[] testCases = {
-            "BEGIN",                    // Valid keyword
-            "INTEGER A, B, C",         // Valid declaration
-            "LET X = A + B",           // Valid assignment
-            "LET a = b + c",           // Valid lowercase identifiers
-            "LET X = A % B",           // Forbidden % character
-            "LET X = 5",               // Digit not allowed
-            "LET X = A +* B",          // Combined operators
-            "LET X = A;",              // Semicolon at end
-            "BEGINN",                  // Misspelled keyword
-            "WRITE M",                 // Valid keyword
-            "temp = value",            // Valid lowercase identifier
-            "LET G = a + c"            // Valid expression
+            "BEGIN",
+            "INTEGER A, B, C",
+            "LET X = A + B",
+            "LET a = b + c",
+            "LET X = A % B",   // goes to semantic stage
+            "LET X = 5",       // goes to syntax stage
+            "LET X = A +* B",  // goes to syntax stage
+            "LET X = A;",      // goes to syntax stage
+            "BEGINN",          // lexical error
+            "WRITE M",
+            "temp = value",
+            "LET G = a + c"
         };
-        
-        System.out.println("=========================================");
-        System.out.println("  LEXICAL ANALYSIS TESTER");
-        System.out.println("=========================================");
-        
-        for (int i = 0; i < testCases.length; i++) {
-            System.out.println("\n--- TEST CASE " + (i + 1) + " ---");
-            System.out.println("Input: " + testCases[i]);
-            String result = analyze(testCases[i]);
-            System.out.println(result);
+
+        for (String test : testCases) {
+            System.out.println("Input: " + test);
+            System.out.println("Output: " + analyze(test));
+            System.out.println("----------------------");
         }
     }
 }
