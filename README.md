@@ -2,7 +2,7 @@
 
 This repository contains the documentation and starter Java scaffold for the CTE711S Compiler Techniques group assignment. The assignment is to develop a mini compiler system in Java for the provided V-language-style program, checking errors and translating valid lines through the compiler stages.
 
-The Java files provide a compile-ready staged structure. Task 1 and Task 2 logic is implemented; the remaining team-owned stages still need their assigned implementation work.
+The Java files provide a compile-ready staged structure. Task 1, Task 2, and Task 3 logic is implemented; the remaining team-owned stages still need their assigned implementation work.
 
 ## Assignment Summary
 
@@ -29,9 +29,17 @@ The planned source layout uses `MiniCompiler.java` as the coordinator. It import
 | Stage 2: Syntax Analysis | `stages/SyntaxAnalysis.java` | Pascal | Implemented |
 | Stage 3: Semantic Analysis | `stages/SemanticAnalysis.java` | Jaden | Implemented |
 | Stage 4: Intermediate Code Representation | `stages/IntermediateCodeRepresentation.java` | Jaden | Implemented |
-| Stage 5: Code Generation | `stages/CodeGeneration.java` | Aloys | To be implemented |
+| Stage 5: Code Generation | `stages/CodeGeneration.java` | Aloys | Implemented |
 | Stage 6: Code Optimization | `stages/CodeOptimization.java` | Celine | To be implemented |
 | Stage 7: Target Machine Code in Binary | `stages/TargetMachineCode.java` | Enoch | To be implemented |
+
+## Pascal's Completed Task
+
+Task 1 covers Stage 1 and Stage 2:
+
+- `LexicalAnalysis.java` validates characters and keyword spelling.
+- `SyntaxAnalysis.java` checks statement structure, combined operators, digits, and semicolon-at-end errors.
+- Both stages return `ERROR: ...` when processing must stop, or the clean source line when processing can continue.
 
 ## Jaden's Completed Task
 
@@ -41,13 +49,13 @@ Task 2 covers Stage 3 and Stage 4:
 - `IntermediateCodeRepresentation.java` converts valid assignment expressions into three-address code.
 - Lexical and syntax errors remain Pascal's responsibility in Stage 1 and Stage 2.
 
-## Pascal's Completed Task
+## Aloys's Completed Task
 
-Task 1 covers Stage 1 and Stage 2:
+Task 3 covers Stage 5:
 
-- `LexicalAnalysis.java` validates characters and keyword spelling.
-- `SyntaxAnalysis.java` checks statement structure, combined operators, digits, and semicolon-at-end errors.
-- Both stages return `ERROR: ...` when processing must stop, or the clean source line when processing can continue.
+- `CodeGeneration.java` converts Stage 4 three-address code into simple lower-level instructions.
+- The generated instruction format uses `LOAD`, arithmetic operations (`ADD`, `SUB`, `MUL`, `DIV`), and `STORE`.
+- Code generation returns `ERROR: Code generation error - ...` if the intermediate code format is invalid.
 
 ## Compiler Stages
 
