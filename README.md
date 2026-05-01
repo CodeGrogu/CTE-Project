@@ -2,7 +2,7 @@
 
 This repository contains the documentation and starter Java scaffold for the CTE711S Compiler Techniques group assignment. The assignment is to develop a mini compiler system in Java for the provided V-language-style program, checking errors and translating valid lines through the compiler stages.
 
-The Java files provide a compile-ready staged structure. Jaden's Stage 3 and Stage 4 logic is implemented; the remaining team-owned stages still need their assigned implementation work.
+The Java files provide a compile-ready staged structure. Task 1 and Task 2 logic is implemented; the remaining team-owned stages still need their assigned implementation work.
 
 ## Assignment Summary
 
