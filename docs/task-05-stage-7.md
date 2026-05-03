@@ -22,6 +22,19 @@ Target Machine Code in Binary should represent the final output stage for valid 
 
 The implementation belongs in `stages/TargetMachineCode.java`.
 
+## Output Format
+
+Stage 7 converts the Stage 6 accumulator instructions into a simple binary-looking form.
+
+- `LOAD` maps to `0001`
+- `ADD` maps to `0010`
+- `SUB` maps to `0011`
+- `MUL` maps to `0100`
+- `DIV` maps to `0101`
+- `STORE` maps to `0110`
+
+Each operand is written as 8-bit ASCII binary, so identifiers and temporary variables still have a readable binary result.
+
 ## Stage Boundary
 
 Only valid lines should reach Target Machine Code in Binary:

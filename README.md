@@ -2,7 +2,7 @@
 
 This repository contains the documentation and starter Java scaffold for the CTE711S Compiler Techniques group assignment. The assignment is to develop a mini compiler system in Java for the provided V-language-style program, checking errors and translating valid lines through the compiler stages.
 
-The Java files provide a compile-ready staged structure. Task 1, Task 2, Task 3, and Task 4 logic is implemented; the remaining team-owned stage still needs its assigned implementation work.
+The Java files provide a compile-ready staged structure. Task 1, Task 2, Task 3, Task 4, and Task 5 logic is implemented.
 
 ## Assignment Summary
 
@@ -31,7 +31,7 @@ The planned source layout uses `MiniCompiler.java` as the coordinator. It import
 | Stage 4: Intermediate Code Representation | `stages/IntermediateCodeRepresentation.java` | Jaden | Implemented |
 | Stage 5: Code Generation | `stages/CodeGeneration.java` | Aloys | Implemented |
 | Stage 6: Code Optimization | `stages/CodeOptimization.java` | Celine | Implemented |
-| Stage 7: Target Machine Code in Binary | `stages/TargetMachineCode.java` | Enoch | To be implemented |
+| Stage 7: Target Machine Code in Binary | `stages/TargetMachineCode.java` | Enoch | Implemented |
 
 ## Pascal's Completed Task
 
@@ -64,6 +64,7 @@ Task 4 covers Stage 6:
 - `CodeOptimization.java` performs conservative optimization on generated lower-level code.
 - It removes exact duplicate consecutive `LOAD` instructions, which is safe for accumulator-style code.
 - It preserves `STORE` and `LOAD` pairs that are needed to keep temporary values correct.
+
 
 ## Compiler Stages
 
@@ -135,7 +136,7 @@ All team members are Computer Science software developers.
 
 ## Documentation
 
-Start with [docs/assignment-brief.md](docs/assignment-brief.md) for the summarized assignment rules, then use the five task documents to organize the compiler-stage work.
+Start with [docs/assignment-brief.md](docs/assignment-brief.md) for the summarized assignment rules, then use the five task documents and the project guide for the compiler-stage work.
 
 ## Compile and Run
 
