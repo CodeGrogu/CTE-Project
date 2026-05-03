@@ -65,6 +65,14 @@ Task 4 covers Stage 6:
 - It removes exact duplicate consecutive `LOAD` instructions, which is safe for accumulator-style code.
 - It preserves `STORE` and `LOAD` pairs that are needed to keep temporary values correct.
 
+## Enoch's Completed Task
+
+Task 5 civers Stage 7:
+
+- `TargetMachineCode.java` converts the optimized lower-level code into binary-style target machine code.
+- The generated output uses fixed binary opcodes for `LOAD`, `ADD`, `SUB`, `MUL`, `DIV`, and `STORE`.
+- Stage 7 returns `ERROR: Target machine code error - ...` if the optimized code format is invalid.
+
 
 ## Compiler Stages
 
